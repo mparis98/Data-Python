@@ -15,7 +15,7 @@ python run.py
 ```
 
 ## Initialize BDD
-In the file "backend/__init__.py", change your database information
+In the file **backend/__init__.py**, change your database information
 ```
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://username:password%@localhost/database'
 

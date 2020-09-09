@@ -22,7 +22,7 @@ for data in datas['records']:
         num_dept = data['fields']['num_dept']
     else:
         num_dept = None
-    if 'code_ape' in data['fields'].keys():
+    if 'code_ape' in data['fields'].keys() and 'siren' in data['fields'].keys():
         code_ape = data['fields']['code_ape']
         mylist.append({
             'siren':data['fields']['siren'],
@@ -35,6 +35,7 @@ for data in datas['records']:
             'code_ape':code_ape,
             'fiche_identite':'https://www.infogreffe.fr/infogreffe/ficheIdentite.do?siren='+data['fields']['siren']
         })
+
 
 for row in mylist:
     requests.post('http://localhost:5000/company/', json=row)

@@ -22,6 +22,11 @@ for data in datas['records']:
         num_dept = data['fields']['num_dept']
     else:
         num_dept = None
+    if 'siren' in data['fields'].keys():
+        siren = data['fields']['siren']
+    else:
+        siren = None
+
         
     mylist.append( {
         'siren':data['fields']['siren'],

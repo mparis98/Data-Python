@@ -2,6 +2,26 @@
 
 Flask api Rest and VueJS.
 
+## Initialize BDD
+
+### Docker
+In the folder backend run:
+```
+docker-compose up
+```
+
+### OR
+
+In the file **backend/__init__.py**, change database information by your
+```
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost:3306/company'
+```
+
+Then manually create your database and launch the following command:
+```
+python3 create_data.py
+```
+
 ## Backend
 
 ```
@@ -14,19 +34,8 @@ pip install pymysql
 python run.py
 ```
 
-## Initialize BDD
-In the file **backend/__init__.py**, change your database information
-```
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://username:password%@localhost/database'
-
-```
-Then manually create your database and launch the following command:
-```
-python3 create_data.py
-
-```
-
 Port : 5000.
+
 
 ## Front-end
 

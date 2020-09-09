@@ -5,7 +5,7 @@ Flask api Rest and VueJS.
 ## Backend
 
 ```
-git clone https://github.com/rg3915/flask-vuejs.git
+git clone https://github.com/mparis98/Data-Python.git
 cd flask-vuejs
 python3 -m venv .venv
 cd /backend

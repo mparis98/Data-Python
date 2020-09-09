@@ -1,6 +1,6 @@
 import requests, json, urllib
 
-url = "https://opendata.datainfogreffe.fr/api/records/1.0/search/?dataset=societes-immatriculees-2020&q=&rows=100&sort=date_immatriculation&facet=siren&facet=forme_juridique&facet=ville&facet=region&facet=date_immatriculation&facet=statut"
+url = "https://opendata.datainfogreffe.fr/api/records/1.0/search/?dataset=societes-immatriculees-2020&q=&rows=1000&sort=date_immatriculation&facet=siren&facet=forme_juridique&facet=ville&facet=region&facet=date_immatriculation&facet=statut"
 
 r = requests.get(url)
 datas = r.json()

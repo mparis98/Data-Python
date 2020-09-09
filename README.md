@@ -17,7 +17,7 @@ In the file **backend/__init__.py**, change database information by your
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost:3306/company'
 ```
 
-Then manually create your database and launch the following command:
+Then launch the following command:
 ```
 python3 create_data.py
 ```

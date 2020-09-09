@@ -48,7 +48,7 @@ class CompanyView(MethodView):
     def get(self, id=None, page=1):
         _list = []
         if not id:
-            companys = Company.query.paginate(page, 20).items
+            companys = Company.query.paginate(page, 10000).items
             for company in companys:
                 company_dict = {
                     'id': company.id,

@@ -1,28 +1,18 @@
 <template>
   <div class="product">
     <h1>Entreprises</h1>
-    <div class="pure-form">
-      <fieldset>
-        <input type="text" placeholder="Entreprise" v-model="name">
-        <button type="submit" class="pure-button pure-button-primary" @click="addCompany">Ajouter</button>
-      </fieldset>
-    </div>
-    <table class="pure-table">
+    <table id="example" class="display" style="width:100%">
       <thead>
-        <tr>
-          <th>Entreprise</th>
-          <th>Suprimer</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="company in companys">
-          <td style="text-align:left">{{ company.name }}</td>
-          <td>
-            <!-- <span class="dropdown-item" style="cursor:pointer;padding-right:10px" click="edit(item)"><i class="fa fa-edit" style="color:#20a8d8"></i></span> -->
-            <span class="dropdown-item" style="cursor:pointer" @click="remove(company)"><i class="fa fa-close" style="color:red"></i></span>
-          </td>
-        </tr>
-      </tbody>
+            <tr>
+                <th>Siren</th>
+                <th>Denomination</th>
+                <th>Region</th>
+                <th>Ville</th>
+                <th>Code Postal</th>
+                <th>Numéro de département</th>
+                <th>Date d'immatriculation</th>
+            </tr>
+        </thead>
     </table>
   </div>
 </template>
@@ -74,6 +64,30 @@ export default {
     this.getCompanys()
   }
 }
+</script>
+
+<script>
+$(document).ready(function() {
+      var t = $('#example').DataTable();
+  $.ajax({
+            method: 'GET',
+            type: 'GET',
+            url: 'http://localhost:5000/company/',
+            success: function (datas) {
+              datas.data.forEach(element => {
+                t.row.add([
+                  element.siren,
+                  element.denomination,
+                  element.region,
+                  element.ville,
+                  element.code_postal,
+                  element.num_dept,
+                  element.date_immatriculation
+              ]).draw( false );
+              })
+            }
+  });
+} );
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

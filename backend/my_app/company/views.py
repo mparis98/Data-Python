@@ -26,7 +26,9 @@ class CompanyViewRequests(MethodView):
         code_postal = data.get('code_postal')
         num_dept = data.get('num_dept')
         date_immatriculation = data.get('date_immatriculation')
-        company = Company(siren, denomination, region, ville, code_postal, num_dept, date_immatriculation)
+        code_ape = data.get('code_ape')
+        fiche_identite = data.get('fiche_identite')
+        company = Company(siren, denomination, region, ville, code_postal, num_dept, date_immatriculation, code_ape, fiche_identite)
         db.session.add(company)
         db.session.commit()
         company_dict = {
@@ -37,7 +39,9 @@ class CompanyViewRequests(MethodView):
                 'ville': company.ville,
                 'code_postal': company.code_postal,
                 'num_dept': company.num_dept,
-                'date_immatriculation': company.date_immatriculation
+                'date_immatriculation': company.date_immatriculation,
+                'code_ape': company.code_ape,
+                'fiche_identite': company.fiche_identite
             }
         }
         return jsonify(company_dict)
@@ -58,7 +62,9 @@ class CompanyView(MethodView):
                     'ville': company.ville,
                     'code_postal': company.code_postal,
                     'num_dept': company.num_dept,
-                    'date_immatriculation': company.date_immatriculation
+                    'date_immatriculation': company.date_immatriculation,
+                    'code_ape': company.code_ape,
+                    'fiche_identite': company.fiche_identite
                 }
                 _list.append(company_dict)
         else:
@@ -73,7 +79,9 @@ class CompanyView(MethodView):
                 'ville': company.ville,
                 'code_postal': company.code_postal,
                 'num_dept': company.num_dept,
-                'date_immatriculation': company.date_immatriculation
+                'date_immatriculation': company.date_immatriculation,
+                'code_ape': company.code_ape,
+                'fiche_identite': company.fiche_identite
             }
             _list.append(company_dict)
         data = {'data': _list}
@@ -88,7 +96,9 @@ class CompanyView(MethodView):
         code_postal = data.get('code_postal')
         num_dept = data.get('num_dept')
         date_immatriculation = data.get('date_immatriculation')
-        company = Company(siren, denomination, region, ville, code_postal, num_dept, date_immatriculation)
+        code_ape = data.get('code_ape')
+        fiche_identite = data.get('fiche_identite')
+        company = Company(siren, denomination, region, ville, code_postal, num_dept, date_immatriculation, code_ape, fiche_identite)
         db.session.add(company)
         db.session.commit()
         company_dict = {
@@ -99,7 +109,9 @@ class CompanyView(MethodView):
             'ville': company.ville,
             'code_postal': company.code_postal,
             'num_dept': company.num_dept,
-            'date_immatriculation': company.date_immatriculation
+            'date_immatriculation': company.date_immatriculation,
+            'code_ape': company.code_ape,
+            'fiche_identite': company.fiche_identite
         }
         data = {'data': company_dict}
         return jsonify(data)

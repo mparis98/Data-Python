@@ -1,6 +1,6 @@
 import requests, json, urllib
 
-url = "https://opendata.datainfogreffe.fr/api/records/1.0/search/?dataset=societes-immatriculees-2020&q=&rows=2&sort=date_immatriculation&facet=siren&facet=forme_juridique&facet=ville&facet=region&facet=date_immatriculation&facet=statut"
+url = "https://opendata.datainfogreffe.fr/api/records/1.0/search/?dataset=societes-immatriculees-2020&q=&rows=100&sort=date_immatriculation&facet=siren&facet=forme_juridique&facet=ville&facet=region&facet=date_immatriculation&facet=statut"
 
 r = requests.get(url)
 datas = r.json()
@@ -32,7 +32,6 @@ for data in datas['records']:
         'num_dept':num_dept,
         'date_immatriculation':data['fields']['date_immatriculation']
     })
-print(mylist)
 
-for data in datas:
-    requests.post('http://localhost:5000/company/add', data=data)
+for row in mylist:
+    requests.post('http://localhost:5000/company/', json=row)

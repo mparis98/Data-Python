@@ -19,13 +19,25 @@ class CompanyViewRequests(MethodView):
 
     def post(self):
         data = request.form
-        name = data.get('name')
-        company = Company(name)
+        siren = data.get('siren')
+        denomination = data.get('denomination')
+        region = data.get('region')
+        ville = data.get('ville')
+        code_postal = data.get('code_postal')
+        num_dept = data.get('num_dept')
+        date_immatriculation = data.get('date_immatriculation')
+        company = Company(siren, denomination, region, ville, code_postal, num_dept, date_immatriculation)
         db.session.add(company)
         db.session.commit()
         company_dict = {
             company.id: {
-                'name': company.name,
+                'siren': company.siren,
+                'denomination': company.denomination,
+                'region': company.region,
+                'ville': company.ville,
+                'code_postal': company.code_postal,
+                'num_dept': company.num_dept,
+                'date_immatriculation': company.date_immatriculation
             }
         }
         return jsonify(company_dict)
@@ -40,7 +52,13 @@ class CompanyView(MethodView):
             for company in companys:
                 company_dict = {
                     'id': company.id,
-                    'name': company.name,
+                    'siren': company.siren,
+                    'denomination': company.denomination,
+                    'region': company.region,
+                    'ville': company.ville,
+                    'code_postal': company.code_postal,
+                    'num_dept': company.num_dept,
+                    'date_immatriculation': company.date_immatriculation
                 }
                 _list.append(company_dict)
         else:
@@ -49,21 +67,39 @@ class CompanyView(MethodView):
                 abort(404)
             company_dict = {
                 'id': company.id,
-                'name': company.name,
+                'siren': company.siren,
+                'denomination': company.denomination,
+                'region': company.region,
+                'ville': company.ville,
+                'code_postal': company.code_postal,
+                'num_dept': company.num_dept,
+                'date_immatriculation': company.date_immatriculation
             }
             _list.append(company_dict)
         data = {'data': _list}
         return jsonify(data)
 
     def post(self):
-        data = request.json
-        name = data.get('name')
-        company = Company(name)
+        data = request.get_json(force=True)
+        siren = data.get('siren')
+        denomination = data.get('denomination')
+        region = data.get('region')
+        ville = data.get('ville')
+        code_postal = data.get('code_postal')
+        num_dept = data.get('num_dept')
+        date_immatriculation = data.get('date_immatriculation')
+        company = Company(siren, denomination, region, ville, code_postal, num_dept, date_immatriculation)
         db.session.add(company)
         db.session.commit()
         company_dict = {
             'id': company.id,
-            'name': company.name,
+            'siren': company.siren,
+            'denomination': company.denomination,
+            'region': company.region,
+            'ville': company.ville,
+            'code_postal': company.code_postal,
+            'num_dept': company.num_dept,
+            'date_immatriculation': company.date_immatriculation
         }
         data = {'data': company_dict}
         return jsonify(data)

@@ -69,7 +69,7 @@ export default {
                 menu: '#menu',
                 navigation: true,
                 anchors: ['page1', 'page2', 'page3'],
-                sectionsColor: ['#41b883', '#ff5f45', '#0798ec', '#fec401', '#1bcee6', '#ee1a59', '#2c3e4f', '#ba5be9', '#b4b8ab']
+                sectionsColor: ['white', '#F8F8F8', 'white', '#F8F8F8', '#1bcee6', '#ee1a59', '#2c3e4f', '#ba5be9', '#b4b8ab']
             }
         }
     },
@@ -174,7 +174,7 @@ export default {
 }
 
 h1 {
-    color: #fff;
+    color: black;
 }
 
 ul {
@@ -188,7 +188,7 @@ li {
 }
 
 a {
-    color: #fff;
+    color: black;
     text-decoration: none;
 }
 

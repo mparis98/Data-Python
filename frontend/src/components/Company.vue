@@ -13,12 +13,13 @@
 
     <full-page :options="options" id="fullpage">
         <div class="section">
-            <h3>Section 1</h3>
+            <h3>Branche d'activité principale des entreprises</h3>
             <MyBar :chart-data="dataPoints" />
         </div>
         <div class="section">
             <div class="slide">
-                <h3>Slide 2.1</h3>
+                <h3>Création d'entreprises par région</h3>
+                  <MyLine :chart-data="dataPointsRegion" />
             </div>
             <div class="slide">
                 <h3>Slide 2.2</h3>
@@ -39,12 +40,14 @@
 import axios from 'axios';
 import Grid from '../../node_modules/gridjs-vue/src/gridjs-vue';
 import MyBar from "./MyBar";
+import MyLine from "./MyLine";
 
 export default {
     name: 'app',
     components: {
         Grid,
-        MyBar
+        MyBar,
+        MyLine
     },
     data() {
         return {
@@ -53,6 +56,7 @@ export default {
             countsHits: [],
             autoWidth: true,
             dataPoints: {},
+            dataPointsRegion: {},
             pagination: {
                 limit: 8
             },
@@ -60,6 +64,7 @@ export default {
             sort: true,
             url: 'http://localhost:5000/company/',
             urlCount: 'http://localhost:5000/company/count/',
+            urlCountRegion: 'http://localhost:5000/company/count/region/',
             cols: ['Siren', 'Denomination', 'Region', 'Ville', 'Code_Postal', 'Date_Immatriculation', 'Code_Ape'],
             options: {
                 licenseKey: 'YOUR_KEY_HERE',
@@ -138,6 +143,18 @@ export default {
                     this.countsHits = result.data[1]
                 })
         },
+         getCountsRegion() {
+            axios.get(this.urlCountRegion)
+                .then((result) => {
+                    this.countsRegion = result.data[0]
+                })
+        },
+        getCountsRegionHits() {
+            axios.get(this.urlCountRegion)
+                .then((result) => {
+                    this.countsRegionHits = result.data[1]
+                })
+        },
         fillData() {
             this.dataPoints = {
                 labels: this.countsApe,
@@ -147,14 +164,29 @@ export default {
                     data: this.countsHits
                 }]
             }
+        },
+        fillDataRegion() {
+            this.dataPointsRegion = {
+                labels: this.countsRegion,
+                datasets: [{
+                    label: 'Region',
+                    backgroundColor: "blue",
+                    data: this.countsRegionHits
+                }]
+            }
         }
     },
     mounted() {
         this.getCompanys(),
             this.getCountsApe(),
             this.getCountsHits(),
+            this.getCountsRegion(),
+            this.getCountsRegionHits(),
             setInterval(() => {
                 this.fillData()
+            }, 2000),
+            setInterval(() => {
+                this.fillDataRegion()
             }, 2000)
     }
 }

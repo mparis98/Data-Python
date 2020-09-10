@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "axios": "^0.18.1",
-    "vue": "^2.6.12"
+    "vue": "^2.6.12",
+    "vue-fullpage.js": "^0.1.6"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

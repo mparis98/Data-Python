@@ -11,6 +11,8 @@
                 <th>Code Postal</th>
                 <th>Numéro de département</th>
                 <th>Date d'immatriculation</th>
+                <th>Code APE </th>
+                <th>Fiche identité </th> 
             </tr>
         </thead>
     </table>
@@ -82,7 +84,9 @@ $(document).ready(function() {
                   element.ville,
                   element.code_postal,
                   element.num_dept,
-                  element.date_immatriculation
+                  element.date_immatriculation,
+                  element.code_ape,
+                  `<a target="_blank" href="${element.fiche_identite}">${element.fiche_identite}</a>`
               ]).draw( false );
               })
             }

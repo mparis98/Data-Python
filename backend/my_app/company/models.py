@@ -10,8 +10,10 @@ class Company(db.Model):
     code_postal = db.Column(db.String(255))
     num_dept = db.Column(db.String(255))
     date_immatriculation = db.Column(db.DateTime)
+    code_ape = db.Column(db.String(255))
+    fiche_identite = db.Column(db.String(255))
 
-    def __init__(self, siren, denomination, region, ville, code_postal, num_dept, date_immatriculation):
+    def __init__(self, siren, denomination, region, ville, code_postal, num_dept, date_immatriculation, code_ape, fiche_identite):
         self.siren = siren
         self.denomination = denomination
         self.region = region
@@ -19,6 +21,8 @@ class Company(db.Model):
         self.code_postal = code_postal
         self.num_dept = num_dept
         self.date_immatriculation = date_immatriculation
+        self.code_ape = code_ape
+        self.fiche_identite = fiche_identite
 
     def __repr__(self):
         return '<Company %d>' % self.id

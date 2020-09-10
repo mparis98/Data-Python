@@ -1,6 +1,6 @@
 import requests, json, urllib
 
-url = "https://opendata.datainfogreffe.fr/api/records/1.0/search/?dataset=societes-immatriculees-2020&q=&rows=1000&sort=date_immatriculation&facet=siren&facet=forme_juridique&facet=ville&facet=region&facet=date_immatriculation&facet=statut"
+url = "https://opendata.datainfogreffe.fr/api/records/1.0/search/?dataset=societes-immatriculees-2020&q=&rows=2500&sort=date_immatriculation&facet=siren&facet=forme_juridique&facet=code_ape&facet=ville&facet=region&facet=greffe&facet=date_immatriculation&facet=statut"
 
 r = requests.get(url)
 datas = r.json()
@@ -22,21 +22,20 @@ for data in datas['records']:
         num_dept = data['fields']['num_dept']
     else:
         num_dept = None
-    if 'siren' in data['fields'].keys():
-        siren = data['fields']['siren']
-    else:
-        siren = None
+    if 'code_ape' in data['fields'].keys() and 'siren' in data['fields'].keys():
+        code_ape = data['fields']['code_ape']
+        mylist.append({
+            'siren':data['fields']['siren'],
+            'denomination':data['fields']['denomination'],
+            'region':region,
+            'ville':ville,
+            'code_postal':code_postal,
+            'num_dept':num_dept,
+            'date_immatriculation':data['fields']['date_immatriculation'],
+            'code_ape':code_ape,
+            'fiche_identite':'https://www.infogreffe.fr/infogreffe/ficheIdentite.do?siren='+data['fields']['siren']
+        })
 
-        
-    mylist.append( {
-        'siren':data['fields']['siren'],
-        'denomination':data['fields']['denomination'],
-        'region':region,
-        'ville':ville,
-        'code_postal':code_postal,
-        'num_dept':num_dept,
-        'date_immatriculation':data['fields']['date_immatriculation']
-    })
 
 for row in mylist:
     requests.post('http://localhost:5000/company/', json=row)

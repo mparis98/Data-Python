@@ -2,6 +2,7 @@ from flask import request, jsonify, Blueprint, abort
 from flask.views import MethodView
 from my_app import db, app
 from my_app.company.models import Company
+from sqlalchemy import text
 
 company = Blueprint('company', __name__)
 
@@ -11,6 +12,17 @@ company = Blueprint('company', __name__)
 def home():
     return "Welcome to the company Home."
 
+class CompanyCountCodeApe(MethodView):
+    def get(self):
+        mylist = []
+        sql = text('select code_ape, count(code_ape) as c from company group by code_ape')
+        result = db.engine.execute(sql)
+        for row in result:
+            mylist.append({
+                'code_ape':row[0],
+                'count':row[1]
+            })
+        return jsonify(mylist)
 
 class CompanyViewRequests(MethodView):
     '''
@@ -31,6 +43,7 @@ class CompanyViewRequests(MethodView):
         company = Company(siren, denomination, region, ville, code_postal, num_dept, date_immatriculation, code_ape, fiche_identite)
         db.session.add(company)
         db.session.commit()
+        Company.query()
         company_dict = {
             company.id: {
                 'siren': company.siren,
@@ -132,6 +145,7 @@ class CompanyView(MethodView):
 
 company_view_requests = CompanyViewRequests.as_view('company_view_requests')
 company_view = CompanyView.as_view('company_view')
+company_count_ape_view = CompanyCountCodeApe.as_view('company_count_ape_view')
 
 app.add_url_rule(
     '/company/',
@@ -139,6 +153,11 @@ app.add_url_rule(
     methods=['GET', 'POST']
 )
 
+app.add_url_rule(
+    '/company/count/',
+    view_func=company_count_ape_view,
+    methods=['GET']
+)
 
 app.add_url_rule(
     '/company/<int:id>',

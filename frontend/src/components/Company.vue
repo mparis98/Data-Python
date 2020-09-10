@@ -13,8 +13,10 @@
 
     <full-page :options="options" id="fullpage">
         <div class="section">
-            <h3>Section 1</h3>
-            <MyBar :chart-data="dataPoints" />
+            <div id="parent">
+                <grid :auto-width="autoWidth" :cols="colsCodeApe" :pagination="paginationCodeApe" :rows="codeAPE" :search="search"></grid>
+                <MyBar :chart-data="dataPoints" />
+            </div>
         </div>
         <div class="section">
             <div class="slide">
@@ -51,16 +53,22 @@ export default {
             companys: [],
             countsApe: [],
             countsHits: [],
+            codeAPE: [],
             autoWidth: true,
             dataPoints: {},
-            pagination: {
-                limit: 8
-            },
             search: true,
             sort: true,
             url: 'http://localhost:5000/company/',
             urlCount: 'http://localhost:5000/company/count/',
+            urlCodeApe: 'http://localhost:5000/codeape/',
             cols: ['Siren', 'Denomination', 'Region', 'Ville', 'Code_Postal', 'Date_Immatriculation', 'Code_Ape'],
+            pagination: {
+                limit: 8
+            },
+            colsCodeApe: ['Code_Ape', 'Intitule_Naf'],
+            paginationCodeApe: {
+                limit: 1
+            },
             options: {
                 licenseKey: 'YOUR_KEY_HERE',
                 afterLoad: this.afterLoad,
@@ -138,6 +146,12 @@ export default {
                     this.countsHits = result.data[1]
                 })
         },
+        getCodeApe() {
+            axios.get(this.urlCodeApe)
+                .then((result) => {
+                    this.codeAPE = result.data.data
+                })
+        },
         fillData() {
             this.dataPoints = {
                 labels: this.countsApe,
@@ -152,6 +166,7 @@ export default {
     mounted() {
         this.getCompanys(),
             this.getCountsApe(),
+            this.getCodeApe(),
             this.getCountsHits(),
             setInterval(() => {
                 this.fillData()
@@ -161,6 +176,11 @@ export default {
 </script>
 
 <style>
+#parent {
+    padding-right: 50px;
+    padding-left: 50px;
+}
+
 #menu {
     position: fixed;
     width: 100%;

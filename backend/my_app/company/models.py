@@ -26,3 +26,17 @@ class Company(db.Model):
 
     def __repr__(self):
         return '<Company %d>' % self.id
+        
+
+class CodeApe(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    code_ape = db.Column(db.String(255))
+    intitule_naf = db.Column(db.String(255))
+
+    def __init__(self, code_ape, intitule_naf):
+        self.code_ape = code_ape
+        self.intitule_naf = intitule_naf
+
+    def __repr__(self):
+        return '<CodeApe %d>' % self.id
+

@@ -15,14 +15,14 @@ def home():
 class CompanyCountCodeApe(MethodView):
     def get(self):
         mylist = []
+        newList = []
         sql = text('select code_ape, count(code_ape) as c from company group by code_ape order by c DESC limit 50')
         result = db.engine.execute(sql)
         for row in result:
-            mylist.append({
-                'code_ape':row[0],
-                'count':row[1]
-            })
-        return jsonify(mylist)
+            mylist.append(row[0])
+            newList.append(row[1])
+        resultTab = [mylist,newList]
+        return jsonify(resultTab)
 
 class CompanyViewRequests(MethodView):
     '''

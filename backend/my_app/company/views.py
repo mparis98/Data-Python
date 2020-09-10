@@ -16,7 +16,7 @@ class CompanyCountCodeApe(MethodView):
     def get(self):
         mylist = []
         newList = []
-        sql = text('select code_ape, count(code_ape) as c from company group by code_ape order by c DESC limit 51')
+        sql = text('select code_ape, count(code_ape) as c from company group by code_ape order by c DESC limit 18')
         result = db.engine.execute(sql)
         for row in result:
             if row[0] != '0000Z':

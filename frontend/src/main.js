@@ -1,14 +1,17 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
-import App from './App'
-// import axios from 'axios'
 
-Vue.config.productionTip = false
+// Optional. When using scrollOverflow:true
+import 'fullpage.js/vendors/scrolloverflow'
 
-/* eslint-disable no-new */
+// Optional. When using fullpage extensions
+//import './fullpage.scrollHorizontally.min'
+
+import VueFullPage from '../node_modules/vue-fullpage.js'
+import App from './App.vue'
+
+Vue.use(VueFullPage)
+
 new Vue({
   el: '#app',
-  components: { App },
-  template: '<App/>'
+  render: h => h(App)
 })

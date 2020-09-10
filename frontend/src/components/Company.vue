@@ -14,6 +14,7 @@
     <full-page :options="options" id="fullpage">
         <div class="section">
             <h3>Section 1</h3>
+            <MyBar :chart-data="dataPoints" />
         </div>
         <div class="section">
             <div class="slide">
@@ -37,21 +38,28 @@
 <script>
 import axios from 'axios';
 import Grid from '../../node_modules/gridjs-vue/src/gridjs-vue';
+import MyBar from "./MyBar";
 
 export default {
+    name: 'app',
     components: {
-        Grid
+        Grid,
+        MyBar
     },
     data() {
         return {
             companys: [],
+            countsApe: [],
+            countsHits: [],
             autoWidth: true,
+            dataPoints: {},
             pagination: {
                 limit: 8
             },
             search: true,
             sort: true,
             url: 'http://localhost:5000/company/',
+            urlCount: 'http://localhost:5000/company/count/',
             cols: ['Siren', 'Denomination', 'Region', 'Ville', 'Code_Postal', 'Date_Immatriculation', 'Code_Ape'],
             options: {
                 licenseKey: 'YOUR_KEY_HERE',
@@ -118,9 +126,36 @@ export default {
                     this.companys = result.data.data
                 })
         },
+        getCountsApe() {
+            axios.get(this.urlCount)
+                .then((result) => {
+                    this.countsApe = result.data[0]
+                })
+        },
+        getCountsHits() {
+            axios.get(this.urlCount)
+                .then((result) => {
+                    this.countsHits = result.data[1]
+                })
+        },
+        fillData() {
+            this.dataPoints = {
+                labels: this.countsApe,
+                datasets: [{
+                    label: 'Code APE',
+                    backgroundColor: '#f87979',
+                    data: this.countsHits
+                }]
+            }
+        }
     },
     mounted() {
-        this.getCompanys()
+        this.getCompanys(),
+            this.getCountsApe(),
+            this.getCountsHits(),
+            setInterval(() => {
+                this.fillData()
+            }, 2000)
     }
 }
 </script>

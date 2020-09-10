@@ -16,11 +16,12 @@ class CompanyCountCodeApe(MethodView):
     def get(self):
         mylist = []
         newList = []
-        sql = text('select code_ape, count(code_ape) as c from company group by code_ape order by c DESC limit 50')
+        sql = text('select code_ape, count(code_ape) as c from company group by code_ape order by c DESC limit 51')
         result = db.engine.execute(sql)
         for row in result:
-            mylist.append(row[0])
-            newList.append(row[1])
+            if row[0] != '0000Z':
+                mylist.append(row[0])
+                newList.append(row[1])
         resultTab = [mylist,newList]
         return jsonify(resultTab)
 

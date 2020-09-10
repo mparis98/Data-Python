@@ -3,9 +3,13 @@ version: "3.3"
 services:
 
   database:
-    image: mariadb:10.4
+    image: mariadb:latest
     ports:
       - "3306:3306"
+    volumes:
+      - ./data-volume:/var/lib/mysql
+      - ./resources/docker-sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=company

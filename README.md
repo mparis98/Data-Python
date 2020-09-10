@@ -4,13 +4,13 @@ Flask api Rest and VueJS.
 
 ## Initialize BDD
 
-### Docker
+### Automatic (creat also creat database with value)
 In the folder backend run:
 ```
 docker-compose up
 ```
 
-### OR
+### Manual
 
 In the file **backend/__init__.py**, change database information by your
 ```

@@ -1,6 +1,5 @@
 <template>
 <div id="app">
-    <img id="logo" src="./assets/logo.png">
     <Company />
 </div>
 </template>
@@ -22,15 +21,5 @@ export default {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
-}
-
-#logo {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    height: 60px;
-    z-index: 99;
-    -webkit-font-smoothing: antialiased;
-    -moz-font-smoothing: antialiased;
 }
 </style>

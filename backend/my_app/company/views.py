@@ -25,6 +25,18 @@ class CompanyCountCodeApe(MethodView):
         resultTab = [mylist,newList]
         return jsonify(resultTab)
 
+class CompanyCountRegion(MethodView):
+    def get(self):
+        mylist = []
+        newList = []
+        sql = text('select region, count(region) as c from company group by region order by c DESC limit 50')
+        result = db.engine.execute(sql)
+        for row in result:
+            mylist.append(row[0])
+            newList.append(row[1])
+        resultTab = [mylist,newList]
+        return jsonify(resultTab)
+
 class CompanyViewRequests(MethodView):
     '''
     CompanyView to use with requests.
@@ -222,6 +234,7 @@ company_view_requests = CompanyViewRequests.as_view('company_view_requests')
 company_view = CompanyView.as_view('company_view')
 company_count_ape_view = CompanyCountCodeApe.as_view('company_count_ape_view')
 code_ape_view = CodeApeView.as_view('code_ape_view')
+company_count_region = CompanyCountRegion.as_view('company_count_region')
 
 app.add_url_rule(
     '/company/',
@@ -238,6 +251,12 @@ app.add_url_rule(
 app.add_url_rule(
     '/company/count/',
     view_func=company_count_ape_view,
+    methods=['GET']
+)
+
+app.add_url_rule(
+    '/company/count/region/',
+    view_func=company_count_region,
     methods=['GET']
 )
 

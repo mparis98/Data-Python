@@ -1,36 +1,40 @@
 <template>
 <div id="app">
+    <img id="logo" src="../assets/logo.png">
     <ul id="menu">
         <li data-menuanchor="page1" class="active"><a href="#page1">Section 1</a></li>
-        <li data-menuanchor="page2"><a href="#page2">Section 2</a></li>
+        <li data-menuanchor="page2"><a href="#page2">Statistique</a></li>
         <li data-menuanchor="page3"><a href="#page3">Entreprise 2020</a></li>
         <li>
             <a href="https://github.com/mparis98/Data-Python" target="_blank" rel="noopener" class="twitter-share">
-                <img height="25px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1200px-Octicons-mark-github.svg.png">
+                <img height="25px" src="../assets/github.png">
             </a>
         </li>
     </ul>
 
     <full-page :options="options" id="fullpage">
         <div class="section">
-            <div id="parent">
-                <grid :auto-width="autoWidth" :cols="colsCodeApe" :pagination="paginationCodeApe" :rows="codeAPE" :search="search"></grid>
-                <MyBar :chart-data="dataPoints" />
-            </div>
         </div>
         <div class="section">
             <div class="slide">
-                <h3>Slide 2.1</h3>
+                <h3>Activité dominant après la crise de Covid-19</h3>
+                <div id="parent">
+                    <grid :auto-width="autoWidth" :cols="colsCodeApe" :pagination="paginationCodeApe" :rows="codeAPE" :search="search"></grid>
+                    <MyBar :chart-data="dataPoints" />
+                </div>
             </div>
             <div class="slide">
-                <h3>Slide 2.2</h3>
+                <h3>Création d'entreprises par région</h3>
+                <div id="parent">
+                    <MyLine :chart-data="dataPointsRegion" />
+                </div>
             </div>
             <div class="slide">
                 <h3>Slide 2.3</h3>
             </div>
         </div>
         <div class="section">
-            <h1>Entreprises Juin 2020</h1>
+            <h1>Entreprises 2020</h1>
             <grid :auto-width="autoWidth" :cols="cols" :pagination="pagination" :rows="companys" :search="search" :sort="sort"></grid>
         </div>
     </full-page>
@@ -41,12 +45,14 @@
 import axios from 'axios';
 import Grid from '../../node_modules/gridjs-vue/src/gridjs-vue';
 import MyBar from "./MyBar";
+import MyLine from "./MyLine";
 
 export default {
     name: 'app',
     components: {
         Grid,
-        MyBar
+        MyBar,
+        MyLine,
     },
     data() {
         return {
@@ -56,11 +62,13 @@ export default {
             codeAPE: [],
             autoWidth: true,
             dataPoints: {},
+            dataPointsRegion: {},
             search: true,
             sort: true,
             url: 'http://localhost:5000/company/',
             urlCount: 'http://localhost:5000/company/count/',
             urlCodeApe: 'http://localhost:5000/codeape/',
+            urlCountRegion: 'http://localhost:5000/company/count/region/',
             cols: ['Siren', 'Denomination', 'Region', 'Ville', 'Code_Postal', 'Date_Immatriculation', 'Code_Ape'],
             pagination: {
                 limit: 8
@@ -77,8 +85,8 @@ export default {
                 menu: '#menu',
                 navigation: true,
                 anchors: ['page1', 'page2', 'page3'],
-                sectionsColor: ['#41b883', '#ff5f45', '#0798ec', '#fec401', '#1bcee6', '#ee1a59', '#2c3e4f', '#ba5be9', '#b4b8ab']
-            }
+                sectionsColor: ['#41b883', '#1bcee6', '#e5e7eb', '#fec401', '#1bcee6', '#ee1a59', '#2c3e4f', '#ba5be9', '#b4b8ab']
+            },
         }
     },
     methods: {
@@ -150,26 +158,54 @@ export default {
             axios.get(this.urlCodeApe)
                 .then((result) => {
                     this.codeAPE = result.data.data
+
+                })
+        },
+        getCountsRegion() {
+            axios.get(this.urlCountRegion)
+                .then((result) => {
+                    this.countsRegion = result.data[0]
+                })
+        },
+        getCountsRegionHits() {
+            axios.get(this.urlCountRegion)
+                .then((result) => {
+                    this.countsRegionHits = result.data[1]
                 })
         },
         fillData() {
             this.dataPoints = {
                 labels: this.countsApe,
                 datasets: [{
-                    label: 'Code APE',
+                    label: 'Codes APE',
                     backgroundColor: '#f87979',
                     data: this.countsHits
                 }]
             }
-        }
+        },
+        fillDataRegion() {
+            this.dataPointsRegion = {
+                labels: this.countsRegion,
+                datasets: [{
+                    label: 'Regions',
+                    backgroundColor: "blue",
+                    data: this.countsRegionHits
+                }]
+            }
+        },
     },
     mounted() {
         this.getCompanys(),
             this.getCountsApe(),
             this.getCodeApe(),
             this.getCountsHits(),
+            this.getCountsRegion(),
+            this.getCountsRegionHits(),
             setInterval(() => {
                 this.fillData()
+            }, 2000),
+            setInterval(() => {
+                this.fillDataRegion()
             }, 2000)
     }
 }
@@ -177,23 +213,55 @@ export default {
 
 <style>
 #parent {
-    padding-right: 50px;
-    padding-left: 50px;
+    max-width: 1300px;
+    margin: auto;
+}
+
+#bar-chart,
+#line-chart {
+    max-width: 1300px;
 }
 
 #menu {
     position: fixed;
     width: 100%;
-    top: 20px;
-    right: 20px;
+    top: 0px;
     z-index: 70;
     -webkit-font-smoothing: antialiased;
     -moz-font-smoothing: antialiased;
     letter-spacing: 1px;
     font-size: 1.1em;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin-top: 0px;
+    background-color: #00000085;
+}
+
+#menu li a {
+    color: #fff;
+}
+
+#logo {
+    position: fixed;
+    top: 6px;
+    left: 20px;
+    height: 50px;
+    z-index: 99;
+    -webkit-font-smoothing: antialiased;
+    -moz-font-smoothing: antialiased;
+}
+
+@media (max-width: 979px) {
+    #logo {
+        display: none;
+    }
 }
 
 h1 {
+    color: #fff;
+}
+
+h3 {
     color: #fff;
 }
 
@@ -208,7 +276,7 @@ li {
 }
 
 a {
-    color: #fff;
+    color: black;
     text-decoration: none;
 }
 

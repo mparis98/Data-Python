@@ -71,23 +71,27 @@ export default {
 <script>
 $(document).ready(function() {
       var t = $('#example').DataTable();
+      var cpt = 0;
   $.ajax({
             method: 'GET',
             type: 'GET',
             url: 'http://localhost:5000/company/',
             success: function (datas) {
               datas.data.forEach(element => {
-                t.row.add([
-                  element.siren,
-                  element.denomination,
-                  element.region,
-                  element.ville,
-                  element.code_postal,
-                  element.num_dept,
-                  element.date_immatriculation,
-                  element.code_ape,
-                  `<a target="_blank" href="${element.fiche_identite}">${element.fiche_identite}</a>`
-              ]).draw( false );
+                if (cpt < 1000){
+                  t.row.add([
+                    element.siren,
+                    element.denomination,
+                    element.region,
+                    element.ville,
+                    element.code_postal,
+                    element.num_dept,
+                    element.date_immatriculation,
+                    element.code_ape,
+                    `<a target="_blank" href="${element.fiche_identite}">${element.fiche_identite}</a>`
+                ]).draw( false );
+                cpt++;
+                }
               })
             }
   });

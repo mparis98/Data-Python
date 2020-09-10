@@ -15,7 +15,7 @@ def home():
 class CompanyCountCodeApe(MethodView):
     def get(self):
         mylist = []
-        sql = text('select code_ape, count(code_ape) as c from company group by code_ape')
+        sql = text('select code_ape, count(code_ape) as c from company group by code_ape order by c DESC limit 50')
         result = db.engine.execute(sql)
         for row in result:
             mylist.append({

@@ -55,7 +55,7 @@
         </div>
         <div class="section">
             <div class="slide">
-                <h3>Activité dominant après la crise de Covid-19</h3>
+                <h3>Les activités dominante post confinement</h3>
                 <div id="parent">
                     <grid :auto-width="autoWidth" :cols="colsCodeApe" :pagination="paginationCodeApe" :rows="codeAPE" :search="search"></grid>
                     <MyBar :chart-data="dataPoints" />
@@ -125,6 +125,7 @@ export default {
             urltruncate: 'http://localhost:5000/company/truncate/',
             urlGenerateCodeape: 'http://localhost:5000/codeape/init',
             cols: ['Siren', 'Denomination', 'Region', 'Ville', 'Code_Postal', 'Date_Immatriculation', 'Code_Ape'],
+
             pagination: {
                 limit: 8
             },
@@ -140,7 +141,7 @@ export default {
                 menu: '#menu',
                 navigation: true,
                 anchors: ['page1', 'page2', 'page3'],
-                sectionsColor: ['#1bcee6', '#41b883', '#e5e7eb', '#fec401', '#1bcee6', '#ee1a59', '#2c3e4f', '#ba5be9', '#b4b8ab']
+                sectionsColor: ['#1bcee6', 'rgb(65 184 140 / 54%)', '#e5e7eb', '#fec401', '#1bcee6', '#ee1a59', '#2c3e4f', '#ba5be9', '#b4b8ab']
             },
         }
     },

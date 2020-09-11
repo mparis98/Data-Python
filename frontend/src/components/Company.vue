@@ -14,6 +14,30 @@
 
     <full-page :options="options" id="fullpage">
         <div class="section">
+            <Progress :transitionDuration="5000" :radius="80" :strokeWidth="20" value="100">
+                <div class="content">{{ nhits }}</div>
+                <template v-slot:footer>
+                    <b>Nombre d'entreprise créées en 2020</b>
+                </template>
+            </Progress>
+            <div id="main">
+                <div id="wide">
+                    <Progress :transitionDuration="4000" :radius="60" :strokeWidth="15" value="10">
+                        <div class="content">{{ nhits2019 }}</div>
+                        <template v-slot:footer>
+                            <b>Nombre d'entreprise créées en juin 2019</b>
+                        </template>
+                    </Progress>
+                </div>
+                <div id="narrow">
+                    <Progress :transitionDuration="4000" :radius="60" :strokeWidth="15" value="15">
+                        <div class="content">{{ nhits2020 }}</div>
+                        <template v-slot:footer>
+                            <b>Nombre d'entreprise créées en juin 2020</b>
+                        </template>
+                    </Progress>
+                </div>
+            </div>
         </div>
         <div class="section">
             <div class="slide">
@@ -29,9 +53,6 @@
                     <MyLine :chart-data="dataPointsRegion" />
                 </div>
             </div>
-            <div class="slide">
-                <h3>Slide 2.3</h3>
-            </div>
         </div>
         <div class="section">
             <h1>Entreprises 2020</h1>
@@ -46,6 +67,7 @@ import axios from 'axios';
 import Grid from '../../node_modules/gridjs-vue/src/gridjs-vue';
 import MyBar from "./MyBar";
 import MyLine from "./MyLine";
+import Progress from "./Circulare";
 
 export default {
     name: 'app',
@@ -53,6 +75,7 @@ export default {
         Grid,
         MyBar,
         MyLine,
+        Progress
     },
     data() {
         return {
@@ -60,6 +83,7 @@ export default {
             countsApe: [],
             countsHits: [],
             codeAPE: [],
+            nhits: null,
             autoWidth: true,
             dataPoints: {},
             dataPointsRegion: {},
@@ -69,6 +93,9 @@ export default {
             urlCount: 'http://localhost:5000/company/count/',
             urlCodeApe: 'http://localhost:5000/codeape/',
             urlCountRegion: 'http://localhost:5000/company/count/region/',
+            urlNbCompany: 'https://opendata.datainfogreffe.fr/api/records/1.0/search/?dataset=societes-immatriculees-2020&q=&rows=1&sort=date_immatriculation&facet=siren&facet=forme_juridique&facet=code_ape&facet=ville&facet=region&facet=greffe&facet=date_immatriculation&facet=statut',
+            urlNbCompany2019: 'https://opendata.datainfogreffe.fr/api/records/1.0/search/?dataset=societes-immatriculees-2019&q=&rows=1&sort=date_immatriculation&facet=siren&facet=forme_juridique&facet=code_ape&facet=ville&facet=region&facet=greffe&facet=date_immatriculation&facet=statut&refine.date_immatriculation=2019-06',
+            urlNbCompany2020: 'https://opendata.datainfogreffe.fr/api/records/1.0/search/?dataset=societes-immatriculees-2020&q=&rows=1&sort=date_immatriculation&facet=siren&facet=forme_juridique&facet=code_ape&facet=ville&facet=region&facet=greffe&facet=date_immatriculation&facet=statut&refine.date_immatriculation=2020-06',
             cols: ['Siren', 'Denomination', 'Region', 'Ville', 'Code_Postal', 'Date_Immatriculation', 'Code_Ape'],
             pagination: {
                 limit: 8
@@ -85,7 +112,7 @@ export default {
                 menu: '#menu',
                 navigation: true,
                 anchors: ['page1', 'page2', 'page3'],
-                sectionsColor: ['#41b883', '#1bcee6', '#e5e7eb', '#fec401', '#1bcee6', '#ee1a59', '#2c3e4f', '#ba5be9', '#b4b8ab']
+                sectionsColor: ['#1bcee6', '#41b883', '#e5e7eb', '#fec401', '#1bcee6', '#ee1a59', '#2c3e4f', '#ba5be9', '#b4b8ab']
             },
         }
     },
@@ -173,6 +200,24 @@ export default {
                     this.countsRegionHits = result.data[1]
                 })
         },
+        getNbCompany() {
+            axios.get(this.urlNbCompany)
+                .then((result) => {
+                    this.nhits = result.data.nhits
+                })
+        },
+        getNbCompany2019() {
+            axios.get(this.urlNbCompany2019)
+                .then((result) => {
+                    this.nhits2019 = result.data.nhits
+                })
+        },
+        getNbCompany2020() {
+            axios.get(this.urlNbCompany2020)
+                .then((result) => {
+                    this.nhits2020 = result.data.nhits
+                })
+        },
         fillData() {
             this.dataPoints = {
                 labels: this.countsApe,
@@ -201,6 +246,9 @@ export default {
             this.getCountsHits(),
             this.getCountsRegion(),
             this.getCountsRegionHits(),
+            this.getNbCompany(),
+            this.getNbCompany2019(),
+            this.getNbCompany2020(),
             setInterval(() => {
                 this.fillData()
             }, 2000),
@@ -212,6 +260,19 @@ export default {
 </script>
 
 <style>
+#main {
+    display: flex;
+}
+
+#narrow {
+    width: 49%;
+}
+
+#wide {
+    flex: 1;
+    width: 49%;
+}
+
 #parent {
     max-width: 1300px;
     margin: auto;
@@ -262,6 +323,10 @@ h1 {
 }
 
 h3 {
+    color: #fff;
+}
+
+b {
     color: #fff;
 }
 

@@ -12,7 +12,10 @@
   "dependencies": {
     "axios": "^0.18.1",
     "chart.js": "^2.9.3",
+    "easy-circular-progress": "^1.0.4",
     "gridjs-vue": "^0.5.2",
+    "node-sass": "^4.14.1",
+    "sass-loader": "^10.0.2",
     "vue": "^2.6.12",
     "vue-chartjs": "^3.5.1",
     "vue-fullpage.js": "^0.1.6",

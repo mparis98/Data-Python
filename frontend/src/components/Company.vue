@@ -53,6 +53,12 @@
                     <MyLine :chart-data="dataPointsRegion" />
                 </div>
             </div>
+            <div class="slide">
+                <h3>Création d'entreprises en Ile-de-France</h3>
+                <div id="parent">
+                    <MyLine :chart-data="dataPointsIleDeFrance" />
+                </div>
+            </div>
         </div>
         <div class="section">
             <h1>Entreprises 2020</h1>
@@ -81,18 +87,22 @@ export default {
         return {
             companys: [],
             countsApe: [],
+            countsIleDeFrance: [],
+            countsIleDeFranceHits: [],
             countsHits: [],
             codeAPE: [],
             nhits: null,
             autoWidth: true,
             dataPoints: {},
             dataPointsRegion: {},
+            dataPointsIleDeFrance: {},
             search: true,
             sort: true,
             url: 'http://localhost:5000/company/',
             urlCount: 'http://localhost:5000/company/count/',
             urlCodeApe: 'http://localhost:5000/codeape/',
             urlCountRegion: 'http://localhost:5000/company/count/region/',
+            urlCountIleDeFrance: 'http://localhost:5000/company/count/IleDeFrance/',
             urlNbCompany: 'https://opendata.datainfogreffe.fr/api/records/1.0/search/?dataset=societes-immatriculees-2020&q=&rows=1&sort=date_immatriculation&facet=siren&facet=forme_juridique&facet=code_ape&facet=ville&facet=region&facet=greffe&facet=date_immatriculation&facet=statut',
             urlNbCompany2019: 'https://opendata.datainfogreffe.fr/api/records/1.0/search/?dataset=societes-immatriculees-2019&q=&rows=1&sort=date_immatriculation&facet=siren&facet=forme_juridique&facet=code_ape&facet=ville&facet=region&facet=greffe&facet=date_immatriculation&facet=statut&refine.date_immatriculation=2019-06',
             urlNbCompany2020: 'https://opendata.datainfogreffe.fr/api/records/1.0/search/?dataset=societes-immatriculees-2020&q=&rows=1&sort=date_immatriculation&facet=siren&facet=forme_juridique&facet=code_ape&facet=ville&facet=region&facet=greffe&facet=date_immatriculation&facet=statut&refine.date_immatriculation=2020-06',
@@ -200,6 +210,18 @@ export default {
                     this.countsRegionHits = result.data[1]
                 })
         },
+        getCountsIleDeFrance() {
+            axios.get(this.urlCountIleDeFrance)
+                .then((result) => {
+                    this.countsIleDeFrance = result.data[0]
+                })
+        },
+        getCountsIleDeFranceHits() {
+            axios.get(this.urlCountIleDeFrance)
+                .then((result) => {
+                    this.countsIleDeFranceHits = result.data[1]
+                })
+        },
         getNbCompany() {
             axios.get(this.urlNbCompany)
                 .then((result) => {
@@ -238,6 +260,26 @@ export default {
                 }]
             }
         },
+        fillDataIleDeFrance() {
+            this.dataPointsIleDeFrance = {
+                labels: this.countsIleDeFrance,
+                datasets: [{
+                    label: "Départements D'Ile-de-France",
+                    backgroundColor: "red",
+                    data: this.countsIleDeFranceHits,
+                    backgroundColor: 'transparent',
+                    pointBorderColor: 'orange',
+                    borderDash: [5, 5],
+                    pointBackgroundColor: 'rgba(255,150,0,0.5)',
+                    pointRadius: 5,
+                    pointHoverRadius: 10,
+                    pointHitRadius: 30,
+                    pointBorderWidth: 2,
+                    pointStyle: 'rectRounded',
+                    borderColor: 'orange',
+                }]
+            }
+        },
     },
     mounted() {
         this.getCompanys(),
@@ -246,6 +288,8 @@ export default {
             this.getCountsHits(),
             this.getCountsRegion(),
             this.getCountsRegionHits(),
+            this.getCountsIleDeFrance(),
+            this.getCountsIleDeFranceHits(),
             this.getNbCompany(),
             this.getNbCompany2019(),
             this.getNbCompany2020(),
@@ -254,6 +298,9 @@ export default {
             }, 2000),
             setInterval(() => {
                 this.fillDataRegion()
+            }, 2000),
+            setInterval(() => {
+                this.fillDataIleDeFrance()
             }, 2000)
     }
 }

@@ -37,6 +37,18 @@ class CompanyCountRegion(MethodView):
         resultTab = [mylist,newList]
         return jsonify(resultTab)
 
+class CompanyCountIleDeFrance(MethodView):
+    def get(self):
+        mylist = []
+        newList = []
+        sql = text("select num_dept, count(num_dept) as c from company where region LIKE 'Ile-de-France' group by num_dept order by c DESC limit 50")
+        result = db.engine.execute(sql)
+        for row in result:
+            mylist.append(row[0])
+            newList.append(row[1])
+        resultTab = [mylist,newList]
+        return jsonify(resultTab)
+
 class CompanyViewRequests(MethodView):
     '''
     CompanyView to use with requests.
@@ -235,6 +247,7 @@ company_view = CompanyView.as_view('company_view')
 company_count_ape_view = CompanyCountCodeApe.as_view('company_count_ape_view')
 code_ape_view = CodeApeView.as_view('code_ape_view')
 company_count_region = CompanyCountRegion.as_view('company_count_region')
+company_count_ile_de_france = CompanyCountIleDeFrance.as_view('company_count_ile_de_france')
 
 app.add_url_rule(
     '/company/',
@@ -257,6 +270,12 @@ app.add_url_rule(
 app.add_url_rule(
     '/company/count/region/',
     view_func=company_count_region,
+    methods=['GET']
+)
+
+app.add_url_rule(
+    '/company/count/IleDeFrance/',
+    view_func=company_count_ile_de_france,
     methods=['GET']
 )
 

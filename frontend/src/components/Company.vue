@@ -41,7 +41,7 @@
         </div>
         <div class="section">
             <div class="slide">
-                <h3>Activité dominant après la crise de Covid-19</h3>
+                <h3>Les activités dominante post confinement</h3>
                 <div id="parent">
                     <grid :auto-width="autoWidth" :cols="colsCodeApe" :pagination="paginationCodeApe" :rows="codeAPE" :search="search"></grid>
                     <MyBar :chart-data="dataPoints" />
@@ -61,7 +61,7 @@
             </div>
         </div>
         <div class="section">
-            <h1>Entreprises 2020</h1>
+            <h1>Entreprises Juin 2020</h1>
             <grid :auto-width="autoWidth" :cols="cols" :pagination="pagination" :rows="companys" :search="search" :sort="sort"></grid>
         </div>
     </full-page>
@@ -122,7 +122,7 @@ export default {
                 menu: '#menu',
                 navigation: true,
                 anchors: ['page1', 'page2', 'page3'],
-                sectionsColor: ['#1bcee6', '#41b883', '#e5e7eb', '#fec401', '#1bcee6', '#ee1a59', '#2c3e4f', '#ba5be9', '#b4b8ab']
+                sectionsColor: ['#1bcee6', 'rgb(65 184 140 / 54%)', '#e5e7eb', '#fec401', '#1bcee6', '#ee1a59', '#2c3e4f', '#ba5be9', '#b4b8ab']
             },
         }
     },

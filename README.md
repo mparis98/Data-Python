@@ -26,7 +26,7 @@ cd backend/
 pip install -r requirements.txt
 pip install pymysql
 ```
-If **python** doesn't work, please try **python3**
+If **python** doesn't work, please try **python3**\
 If **pip** doesn't work, please try **pip3**
 
 In the file **backend/__init__.py**, change database information by your

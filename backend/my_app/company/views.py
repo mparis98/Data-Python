@@ -3,6 +3,8 @@ from flask.views import MethodView
 from my_app import db, app
 from my_app.company.models import Company, CodeApe
 from sqlalchemy import text
+import os  
+import requests, json, urllib
 
 company = Blueprint('company', __name__)
 
@@ -105,6 +107,54 @@ class CodeApeViewRequests(MethodView):
         }
         return jsonify(codeApe_dict)
 
+class CompanyPostFrontView(MethodView):
+        def post(self, year, rows, mouth):
+            url = "https://opendata.datainfogreffe.fr/api/records/1.0/search/?dataset=societes-immatriculees-%s&q=&rows=%s&sort=date_immatriculation&facet=siren&facet=forme_juridique&facet=code_ape&facet=ville&facet=region&facet=greffe&facet=date_immatriculation&facet=statut&refine.date_immatriculation=%s-0%s" % (year, rows, year, mouth)
+
+            r = requests.get(url)
+            datas = r.json()
+            mylist = []
+            for data in datas['records']:
+                if 'ville' in data['fields'].keys():
+                    ville = data['fields']['ville']
+                else:
+                    ville = None
+                if 'code_postal' in data['fields'].keys():
+                    code_postal = data['fields']['code_postal']
+                else:
+                    code_postal = None
+                if 'num_dept' in data['fields'].keys():
+                    num_dept = data['fields']['num_dept']
+                else:
+                    num_dept = None
+                if 'code_ape' in data['fields'].keys() and 'siren' in data['fields'].keys() and 'region' in data['fields'].keys():
+                    code_ape = data['fields']['code_ape']
+                    mylist.append({
+                        'siren':data['fields']['siren'],
+                        'denomination':data['fields']['denomination'],
+                        'region':data['fields']['region'],
+                        'ville':ville,
+                        'code_postal':code_postal,
+                        'num_dept':num_dept,
+                        'date_immatriculation':data['fields']['date_immatriculation'],
+                        'code_ape':code_ape,
+                        'fiche_identite':'https://www.infogreffe.fr/infogreffe/ficheIdentite.do?siren='+data['fields']['siren']
+                    })
+
+            for row in mylist:
+                requests.post('http://localhost:5000/company/', json=row)
+
+            response = {'message': 'Success'}
+            return jsonify(response)
+
+class CompanyDeleteView(MethodView):
+        def delete(self):
+            # Delete all records.
+            sql = text("TRUNCATE TABLE company")
+            db.engine.execute(sql)
+            response = {'message': 'Success'}
+            return jsonify(response)
+
 
 class CompanyView(MethodView):
 
@@ -188,6 +238,7 @@ class CompanyView(MethodView):
         response = {'message': 'Success'}
         return jsonify(response)
 
+
 class CodeApeView(MethodView):
 
     def get(self, id=None, page=1):
@@ -242,10 +293,43 @@ class CodeApeView(MethodView):
         response = {'message': 'Success'}
         return jsonify(response)
 
+
+class CodeApePostFrontView(MethodView):
+        def post(self):
+            urlCodeApe = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=nomenclature-dactivites-francaise-naf-rev-2&rows=1707&q=&facet=intitule_naf&facet=intitule_naf_65&facet=intitule_naf_40"
+
+            rCodeApe = requests.get(urlCodeApe)
+            datasCodeApes = rCodeApe.json()
+            mylistCodeApe = []
+            for datasCodeApe in datasCodeApes['records']:
+                if 'code_naf' in datasCodeApe['fields'].keys():
+                    code_ape = datasCodeApe['fields']['code_naf']
+                else:
+                    code_ape = None
+                if 'intitule_naf' in datasCodeApe['fields'].keys():
+                    intitule_naf = datasCodeApe['fields']['intitule_naf']
+                else:
+                    intitule_naf = None
+                if 'code_naf' in datasCodeApe['fields'].keys():
+                    code_ape = datasCodeApe['fields']['code_naf']
+                    mylistCodeApe.append({
+                        'code_ape':datasCodeApe['fields']['code_naf'],
+                        'intitule_naf':datasCodeApe['fields']['intitule_naf']
+                    })
+
+            for row in mylistCodeApe:
+                requests.post('http://localhost:5000/codeape/', json=row)
+
+            response = {'message': 'Success'}
+            return jsonify(response)
+
 company_view_requests = CompanyViewRequests.as_view('company_view_requests')
 company_view = CompanyView.as_view('company_view')
+company_post_init_view = CompanyPostFrontView.as_view('company_post_init_view')
+company_delete_view = CompanyDeleteView.as_view('company_delete_view')
 company_count_ape_view = CompanyCountCodeApe.as_view('company_count_ape_view')
 code_ape_view = CodeApeView.as_view('code_ape_view')
+code_ape_front_view = CodeApePostFrontView.as_view('code_ape_front_view')
 company_count_region = CompanyCountRegion.as_view('company_count_region')
 company_count_ile_de_france = CompanyCountIleDeFrance.as_view('company_count_ile_de_france')
 
@@ -259,6 +343,12 @@ app.add_url_rule(
     '/codeape/',
     view_func=code_ape_view,
     methods=['GET', 'POST']
+)
+
+app.add_url_rule(
+    '/codeape/init',
+    view_func=code_ape_front_view,
+    methods=['POST']
 )
 
 app.add_url_rule(
@@ -277,6 +367,18 @@ app.add_url_rule(
     '/company/count/IleDeFrance/',
     view_func=company_count_ile_de_france,
     methods=['GET']
+)
+
+app.add_url_rule(
+    '/company/init/<int:year>_<int:rows>_<int:mouth>',
+    view_func=company_post_init_view,
+    methods=['POST']
+)
+
+app.add_url_rule(
+    '/company/truncate/',
+    view_func=company_delete_view,
+    methods=['DELETE']
 )
 
 app.add_url_rule(

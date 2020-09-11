@@ -4,7 +4,7 @@
     <ul id="menu">
         <li data-menuanchor="page1" class="active"><a href="#page1">Section 1</a></li>
         <li data-menuanchor="page2"><a href="#page2">Statistique</a></li>
-        <li data-menuanchor="page3"><a href="#page3">Entreprise 2020</a></li>
+        <li data-menuanchor="page3"><a href="#page3">Entreprises</a></li>
         <li>
             <a href="https://github.com/mparis98/Data-Python" target="_blank" rel="noopener" class="twitter-share">
                 <img height="25px" src="../assets/github.png">
@@ -14,26 +14,40 @@
 
     <full-page :options="options" id="fullpage">
         <div class="section">
-            <Progress :transitionDuration="5000" :radius="80" :strokeWidth="20" value="100">
-                <div class="content">{{ nhits }}</div>
-                <template v-slot:footer>
-                    <b>Nombre d'entreprise créées en 2020</b>
-                </template>
-            </Progress>
+            <div class="button">
+                <a class="danger" @click="remove()">Vider les données</a>
+                <a class="info" @click="generateCodeApe()">Générer les Code APE</a>
+            </div>
+            <div class="pure-form">
+                <fieldset>
+                    <input type="number" placeholder="2019" @keyup.enter="generateCompany" v-model="year" title="Année de création">
+                    <input type="number" placeholder="10" @keyup.enter="generateCompany" v-model="rows" title="Nombre de lignes">
+                    <input type="number" placeholder="6" @keyup.enter="generateCompany" v-model="mouth" title="Mois ciblé">
+                    <button type="submit" class="pure-button pure-button-primary" @click="generateCompany">Générer les données</button>
+                </fieldset>
+            </div>
+            <div>
+                <Progress :transitionDuration="5000" :radius="80" :strokeWidth="20" value="100">
+                    <div class="content">{{ nhits == '' ? 'Undefined' : nhits }}</div>
+                    <template v-slot:footer>
+                        <b>Nombre d'entreprise créées en {{ year }}</b>
+                    </template>
+                </Progress>
+            </div>
             <div id="main">
                 <div id="wide">
                     <Progress :transitionDuration="4000" :radius="60" :strokeWidth="15" value="10">
-                        <div class="content">{{ nhits2019 }}</div>
+                        <div class="content">{{ nhits2019 == '' ? 'Undefined' : nhits2019 }}</div>
                         <template v-slot:footer>
-                            <b>Nombre d'entreprise créées en juin 2019</b>
+                            <b>Nombre d'entreprise créées le {{year}}-0{{mouth}}</b>
                         </template>
                     </Progress>
                 </div>
                 <div id="narrow">
                     <Progress :transitionDuration="4000" :radius="60" :strokeWidth="15" value="15">
-                        <div class="content">{{ nhits2020 }}</div>
+                        <div class="content">{{ nhits2020 == '' ? 'Undefined' : nhits2020 }}</div>
                         <template v-slot:footer>
-                            <b>Nombre d'entreprise créées en juin 2020</b>
+                            <b>Nombre d'entreprise créées le {{year-1}}-0{{mouth}}</b>
                         </template>
                     </Progress>
                 </div>
@@ -61,7 +75,7 @@
             </div>
         </div>
         <div class="section">
-            <h1>Entreprises 2020</h1>
+            <h1>Entreprises</h1>
             <grid :auto-width="autoWidth" :cols="cols" :pagination="pagination" :rows="companys" :search="search" :sort="sort"></grid>
         </div>
     </full-page>
@@ -91,7 +105,12 @@ export default {
             countsIleDeFranceHits: [],
             countsHits: [],
             codeAPE: [],
-            nhits: null,
+            nhits: '',
+            nhits2019: '',
+            nhits2020: '',
+            year: '',
+            rows: '',
+            mouth: '',
             autoWidth: true,
             dataPoints: {},
             dataPointsRegion: {},
@@ -103,9 +122,8 @@ export default {
             urlCodeApe: 'http://localhost:5000/codeape/',
             urlCountRegion: 'http://localhost:5000/company/count/region/',
             urlCountIleDeFrance: 'http://localhost:5000/company/count/IleDeFrance/',
-            urlNbCompany: 'https://opendata.datainfogreffe.fr/api/records/1.0/search/?dataset=societes-immatriculees-2020&q=&rows=1&sort=date_immatriculation&facet=siren&facet=forme_juridique&facet=code_ape&facet=ville&facet=region&facet=greffe&facet=date_immatriculation&facet=statut',
-            urlNbCompany2019: 'https://opendata.datainfogreffe.fr/api/records/1.0/search/?dataset=societes-immatriculees-2019&q=&rows=1&sort=date_immatriculation&facet=siren&facet=forme_juridique&facet=code_ape&facet=ville&facet=region&facet=greffe&facet=date_immatriculation&facet=statut&refine.date_immatriculation=2019-06',
-            urlNbCompany2020: 'https://opendata.datainfogreffe.fr/api/records/1.0/search/?dataset=societes-immatriculees-2020&q=&rows=1&sort=date_immatriculation&facet=siren&facet=forme_juridique&facet=code_ape&facet=ville&facet=region&facet=greffe&facet=date_immatriculation&facet=statut&refine.date_immatriculation=2020-06',
+            urltruncate: 'http://localhost:5000/company/truncate/',
+            urlGenerateCodeape: 'http://localhost:5000/codeape/init',
             cols: ['Siren', 'Denomination', 'Region', 'Ville', 'Code_Postal', 'Date_Immatriculation', 'Code_Ape'],
             pagination: {
                 limit: 8
@@ -222,22 +240,49 @@ export default {
                     this.countsIleDeFranceHits = result.data[1]
                 })
         },
-        getNbCompany() {
-            axios.get(this.urlNbCompany)
-                .then((result) => {
-                    this.nhits = result.data.nhits
+        generateCompany() {
+            axios.all([
+                    axios.get("https://opendata.datainfogreffe.fr/api/records/1.0/search/?dataset=societes-immatriculees-" + this.year + "&q=&rows=1&sort=date_immatriculation&facet=siren&facet=forme_juridique&facet=code_ape&facet=ville&facet=region&facet=greffe&facet=date_immatriculation&facet=statut"),
+                    axios.get("https://opendata.datainfogreffe.fr/api/records/1.0/search/?dataset=societes-immatriculees-" + this.year + "&q=&rows=1&sort=date_immatriculation&facet=siren&facet=forme_juridique&facet=code_ape&facet=ville&facet=region&facet=greffe&facet=date_immatriculation&facet=statut&refine.date_immatriculation=" + this.year + "-0" + this.mouth),
+                    axios.get("https://opendata.datainfogreffe.fr/api/records/1.0/search/?dataset=societes-immatriculees-" + (this.year - 1) + "&q=&rows=1&sort=date_immatriculation&facet=siren&facet=forme_juridique&facet=code_ape&facet=ville&facet=region&facet=greffe&facet=date_immatriculation&facet=statut&refine.date_immatriculation=" + (this.year - 1) + "-0" + this.mouth),
+                    axios.post("http://localhost:5000/company/init/" + this.year + "_" + this.rows + "_" + this.mouth)
+                ])
+                .then(axios.spread((res1, res2, res3, res4) => {
+                    this.nhits = res1.data.nhits;
+                    this.nhits2019 = res2.data.nhits;
+                    this.nhits2020 = res3.data.nhits;
+                    this.getCompanys();
+                    this.getCountsApe();
+                    this.getCodeApe();
+                    this.getCountsHits();
+                    this.getCountsRegion();
+                    this.getCountsRegionHits();
+                    this.getCountsIleDeFrance();
+                    this.getCountsIleDeFranceHits();
+                    setInterval(() => {
+                        this.fillData()
+                    }, 1000);
+                    setInterval(() => {
+                        this.fillDataRegion()
+                    }, 1000);
+                    setInterval(() => {
+                        this.fillDataIleDeFrance()
+                    }, 1000);
+                    alert("Les données ont été générées !");
+                }))
+        },
+        generateCodeApe() {
+            axios.post(this.urlGenerateCodeape)
+                .then((response) => {
+                    location.reload();
+                    alert("Les données ont été générées !");
                 })
         },
-        getNbCompany2019() {
-            axios.get(this.urlNbCompany2019)
-                .then((result) => {
-                    this.nhits2019 = result.data.nhits
-                })
-        },
-        getNbCompany2020() {
-            axios.get(this.urlNbCompany2020)
-                .then((result) => {
-                    this.nhits2020 = result.data.nhits
+        remove() {
+            axios.delete(this.urltruncate)
+                .then((response) => {
+                    location.reload();
+                    alert("Les données ont été supprimées !");
                 })
         },
         fillData() {
@@ -290,18 +335,15 @@ export default {
             this.getCountsRegionHits(),
             this.getCountsIleDeFrance(),
             this.getCountsIleDeFranceHits(),
-            this.getNbCompany(),
-            this.getNbCompany2019(),
-            this.getNbCompany2020(),
             setInterval(() => {
                 this.fillData()
-            }, 2000),
+            }, 500),
             setInterval(() => {
                 this.fillDataRegion()
-            }, 2000),
+            }, 500),
             setInterval(() => {
                 this.fillDataIleDeFrance()
-            }, 2000)
+            }, 500)
     }
 }
 </script>
@@ -394,5 +436,39 @@ a {
 
 ul .active {
     text-decoration: underline;
+}
+
+.danger {
+    color: #fff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+    cursor: pointer;
+    padding: 15px;
+    text-decoration: none;
+}
+
+.info {
+    color: #fff;
+    background-color: #0078e7;
+    border-color: #0078e7;
+    cursor: pointer;
+    padding: 15px;
+    text-decoration: none;
+}
+
+.info:hover {
+    color: #fff;
+    text-decoration: none;
+    background-color: #1360a7;
+}
+
+.danger:hover {
+    color: #fff;
+    text-decoration: none;
+    background-color: #801721;
+}
+
+.button {
+    margin-bottom: 25px;
 }
 </style>

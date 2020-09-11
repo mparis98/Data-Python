@@ -10,7 +10,9 @@ In the folder backend run:
 docker-compose up
 ```
 
-### Manual
+PhpMyAdmin Port:8081
+
+### Manual, after truncate all data
 
 In the file **backend/__init__.py**, change database information by your
 ```
